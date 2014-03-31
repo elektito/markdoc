@@ -10,6 +10,13 @@ from markdoc.config import Config
 from markdoc.render import make_relative
 
 
+def get_redirect_page(doc):
+    m = re.search(r'\[\[\[redirect\((?P<path>.*)\)\]\]\]', doc)
+    if m:
+        return m.group('path')
+    return ''
+
+
 Config.register_default('listing-filename', '_list.html')
 
 
@@ -175,14 +182,24 @@ class Builder(object):
     def render_document(self, path, cache=True):
         if cache:
             return self.document_render_cache.render(path)
+
+        doc = self.render(path)
         
         context = {}
-        context['content'] = self.render(path)
         context['title'] = self.title(path)
-        context['crumbs'] = self.crumbs(path)
         context['make_relative'] = lambda href: make_relative(path, href)
-        
-        template = self.config.template_env.get_template('document.html')
+
+        new_page = get_redirect_page(doc)
+        if new_page != '':
+            # found redirect
+            context['redirect'] = new_page
+            
+            template = self.config.template_env.get_template('redirect.html')
+        else:
+            context['content'] = doc
+            context['crumbs'] = self.crumbs(path)
+            
+            template = self.config.template_env.get_template('document.html')
         return template.render(context)
     
     def render_listing(self, path):
