@@ -237,7 +237,7 @@ def remove_hidden(names):
 def get_title(filename, data):
     """Try to retrieve a title from a filename and its contents."""
     
-    match = re.search(r'<!-- \?title:(.+)-->', data, re.IGNORECASE)
+    match = re.search(r'<!-- title: *(.+)-->', data, re.IGNORECASE)
     if match:
         return match.group(1).strip()
     
