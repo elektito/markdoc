@@ -170,7 +170,7 @@ class Builder(object):
             'sub_directories': sub_directories,
             'pages': pages,
             'files': files,
-            'make_relative': lambda href: make_relative(directory, href),
+            'make_relative': lambda href: make_relative(self.config, directory, href),
         }
     
     def render(self, path, cache=True):
@@ -187,7 +187,7 @@ class Builder(object):
         
         context = {}
         context['title'] = self.title(path)
-        context['make_relative'] = lambda href: make_relative(path, href)
+        context['make_relative'] = lambda href: make_relative(self.config, path, href)
 
         new_page = get_redirect_page(doc)
         if new_page != '':
@@ -216,7 +216,7 @@ class Builder(object):
         crumbs.append((jinja2.Markup('<span class="list-crumb">list</span>'), None))
         
         context['crumbs'] = crumbs
-        context['make_relative'] = lambda href: make_relative(path + '/', href)
+        context['make_relative'] = lambda href: make_relative(self.config, path + '/', href)
         
         template = self.config.template_env.get_template('listing.html')
         return template.render(context)

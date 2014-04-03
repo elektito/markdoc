@@ -156,7 +156,7 @@ class MarkdocWSGIApplication(object):
             context = {}
             context['request'] = request
             context['is_index'] = request.path_info in ['/', '/index.html']
-            context['make_relative'] = lambda href: make_relative(request.path_info, href)
+            context['make_relative'] = lambda href: make_relative(self.config, request.path_info, href)
             context['status'] = status
             context['reason'] = webob.util.status_reasons[status]
             
